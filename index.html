@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Engineering Roadmap</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <div class="logo">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <rect x="2" y="2" width="28" height="28" rx="6" stroke="url(#grad1)" stroke-width="2"/>
+                            <path d="M10 22V10l12 12V10" stroke="url(#grad1)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <defs>
+                                <linearGradient id="grad1" x1="0" y1="0" x2="32" y2="32">
+                                    <stop offset="0%" stop-color="#6366f1"/>
+                                    <stop offset="100%" stop-color="#a855f7"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1>AI Engineering Roadmap</h1>
+                        <p class="subtitle">Master AI Engineering — one floor at a time</p>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button class="btn-icon" id="searchBtn" title="Search">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    </button>
+                    <button class="btn-icon" id="mapBtn" title="Mini Map">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Search Bar (hidden by default) -->
+            <div class="search-bar" id="searchBar">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                <input type="text" id="searchInput" placeholder="Search lessons, topics, glossary...">
+                <button class="search-close" id="searchClose">&times;</button>
+            </div>
+
+            <!-- Towers Grid -->
+            <section class="towers-section">
+                <div class="section-header">
+                    <h2>Learning Towers</h2>
+                    <span class="section-subtitle">Complete lessons to build your towers</span>
+                </div>
+                <div class="towers-grid" id="towersGrid">
+                    <!-- Towers rendered by JS -->
+                </div>
+            </section>
+
+            <!-- Memory Cards Section -->
+            <section class="memory-section">
+                <div class="section-header">
+                    <h2>Memory Cards</h2>
+                    <span class="section-subtitle">Key concepts to remember</span>
+                </div>
+                <div class="memory-cards" id="memoryCards">
+                    <!-- Memory cards rendered by JS -->
+                </div>
+            </section>
+
+            <!-- Glossary Section -->
+            <section class="glossary-section">
+                <div class="section-header">
+                    <h2>Glossary</h2>
+                    <span class="section-subtitle">Key terms & definitions</span>
+                </div>
+                <div class="glossary-grid" id="glossaryGrid">
+                    <!-- Glossary rendered by JS -->
+                </div>
+            </section>
+
+            <!-- Activity Feed -->
+            <section class="activity-section">
+                <div class="section-header">
+                    <h2>Activity Feed</h2>
+                    <span class="section-subtitle">Your recent learning activity</span>
+                </div>
+                <div class="activity-feed" id="activityFeed">
+                    <!-- Activity rendered by JS -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Right Sidebar -->
+        <aside class="sidebar">
+            <!-- Progress Ring -->
+            <div class="sidebar-card progress-card">
+                <h3>Overall Progress</h3>
+                <div class="progress-ring-container">
+                    <svg class="progress-ring" viewBox="0 0 120 120">
+                        <circle class="progress-ring-bg" cx="60" cy="60" r="52"/>
+                        <circle class="progress-ring-fill" id="progressRingFill" cx="60" cy="60" r="52"/>
+                    </svg>
+                    <div class="progress-ring-text">
+                        <span class="progress-percent" id="progressPercent">0%</span>
+                        <span class="progress-label">Complete</span>
+                    </div>
+                </div>
+                <div class="progress-stats">
+                    <div class="stat">
+                        <span class="stat-value" id="completedLessons">0</span>
+                        <span class="stat-label">Lessons Done</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="totalLessons">0</span>
+                        <span class="stat-label">Total Lessons</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="sidebar-card stats-card">
+                <h3>Your Stats</h3>
+                <div class="stats-list">
+                    <div class="stat-item">
+                        <div class="stat-icon streak-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 11-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="dayStreak">0</span>
+                            <span class="stat-label">Day Streak</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon hours-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="studyHours">0h</span>
+                            <span class="stat-label">Study Hours</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon floors-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6M9 11h.01M15 11h.01M9 15h.01M15 15h.01"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="unlockedFloors">0</span>
+                            <span class="stat-label">Floors Unlocked</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weakness Panel -->
+            <div class="sidebar-card weakness-card">
+                <h3>Focus Areas</h3>
+                <p class="weakness-subtitle">Topics needing attention</p>
+                <div class="weakness-list" id="weaknessList">
+                    <!-- Weakness items rendered by JS -->
+                </div>
+            </div>
+
+            <!-- Learning Track (Bottom) -->
+            <div class="sidebar-card track-card">
+                <h3>Learning Track</h3>
+                <div class="track-progress">
+                    <div class="track-bar">
+                        <div class="track-fill" id="trackFill"></div>
+                    </div>
+                    <span class="track-text" id="trackText">0 / 0 lessons</span>
+                </div>
+                <div class="track-legend" id="trackLegend">
+                    <!-- Track legend rendered by JS -->
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Mini Map Modal -->
+    <div class="modal" id="mapModal">
+        <div class="modal-overlay" id="mapOverlay"></div>
+        <div class="modal-content map-modal-content">
+            <div class="modal-header">
+                <h3>Roadmap Overview</h3>
+                <button class="modal-close" id="mapClose">&times;</button>
+            </div>
+            <div class="mini-map" id="miniMap">
+                <!-- Mini map rendered by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Lesson Modal -->
+    <div class="modal" id="lessonModal">
+        <div class="modal-overlay" id="lessonOverlay"></div>
+        <div class="modal-content lesson-modal-content">
+            <div class="modal-header">
+                <h3 id="lessonModalTitle">Lesson</h3>
+                <button class="modal-close" id="lessonClose">&times;</button>
+            </div>
+            <div class="lesson-modal-body" id="lessonModalBody">
+                <!-- Lesson content rendered by JS -->
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
