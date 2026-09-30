@@ -92,6 +92,8 @@ git commit -m "Redesign UI as AI Academy night-city dashboard"
 git push
 ```
 
+If you changed `styles.css` or `app.js`, also bump the `?v=` number on their `<link>` / `<script>` tags in `index.html` (for example `?v=2026.10.05`). Browsers cache these files for a few minutes, and a new version number makes them download the fresh copy instead of mixing old styles with the new page. To see a change immediately yourself, hard-refresh with `Ctrl + Shift + R`.
+
 ## Project Structure
 
 ```
