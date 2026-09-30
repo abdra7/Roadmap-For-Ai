@@ -1,22 +1,27 @@
-# AI Engineering Roadmap
+# AI Academy — AI Engineering Roadmap
 
-An interactive, gamified AI Engineering roadmap where each of the 7 core topics is a **tower**, and each completed lesson adds a **floor** to that tower. Track your progress, build streaks, and master AI engineering — one floor at a time.
+An interactive, gamified AI Engineering roadmap drawn as a **night city**. Each of the 7 core topics is a **tower**, and each completed lesson lights up a new **floor**. Track your progress, build streaks, and master AI engineering — one floor at a time.
 
 ## Features
 
-- **7 Learning Towers** — Data & ML, Deep Learning, AI Engineering, MLOps, Architecture, Responsible AI, Professional Practices
-- **Lesson Tracking** — Click any tower to see lessons, mark them complete, and watch your tower grow
-- **Circular Progress Ring** — Visual overall progress in the sidebar
-- **Day Streak** — Build and maintain your learning streak
-- **Study Hours** — Auto-tracked from lesson durations
-- **Unlocked Floors Counter** — See how many floors you've built
-- **Weakness Panel** — Auto-computed focus areas that need attention
-- **Memory Cards** — Key concepts to remember, organized by topic
-- **Glossary** — 14 essential AI/ML terms with definitions
-- **Instant Search** — Search across lessons, topics, memory cards, and glossary
-- **Mini Map** — Bird's-eye view of all 7 towers
-- **Activity Feed** — Your recent learning activity
-- **100% Local & Free** — All data stored in localStorage, no server needed
+- **Night-city home screen** — a procedurally drawn SVG skyline with 7 isometric towers. Built floors glow in the tower's colour, the next floor pulses as "under construction", and planned floors show as blueprint outlines. Finish a tower and its crown lights up with a beacon.
+- **7 Learning Towers** — Data & ML, Deep Learning, AI Engineering, MLOps, Architecture, Responsible AI, Professional Practices (7 lessons each, 49 total)
+- **Lesson Tracking** — click any tower, label or card to open its lessons and mark the next one complete
+- **Overall Progress Ring + Floors Unlocked** — overlaid on the city
+- **Study Overview** — study-hours ring (hours studied vs. the whole curriculum) with This Week / This Month / All Time ranges, day streak, total study days and towers built
+- **Weakness Panel** — auto-computed topics with the lowest completion
+- **Memory Cards** — 14 key concepts as flashcards (Show Answer, previous / next, and a full Flashcards page with topic filters)
+- **Glossary** — 14 essential AI/ML terms (Key Terms chips on the home screen + full Glossary page)
+- **Instant Search** — press `/` and search lessons, topics, memory cards and glossary terms; arrow keys + Enter to open a result
+- **City Map** — bird's-eye isometric map with zoom, plus a larger map dialog
+- **Activity Feed** — recent completions on the home screen, full history on the Statistics page
+- **Statistics page** — KPI tiles, per-tower completion bars and minutes studied over the last 14 days
+- **Notifications** — streak reminders and the next lesson for your weakest tower
+- **Settings** — display name (avatar initials) and a guarded "reset all progress"
+- **Keyboard friendly** — `/` search, `Esc` closes dialogs/menus, focus is trapped in dialogs, visible focus rings everywhere
+- **Responsive** — sidebar becomes a drawer on tablets/phones; the city scrolls sideways on small screens
+- **Respects reduced motion** — animations switch off when the OS asks for it
+- **100% Local & Free** — all data stored in `localStorage` (key `ai_roadmap_state`), no server, no build step
 
 ## Quick Start
 
@@ -76,29 +81,40 @@ git push -u origin main
 5. Click **Save**
 6. Wait 1-2 minutes, then visit: `https://abdra7.github.io/Roadmap-For-Ai/`
 
+### 4. Publishing an update
+
+After changing any file, push it and GitHub Pages redeploys in a minute or two:
+
+```bash
+cd C:/Users/abdul/roadmap-for-ai
+git add index.html styles.css app.js README.md
+git commit -m "Redesign UI as AI Academy night-city dashboard"
+git push
+```
+
 ## Project Structure
 
 ```
 roadmap-for-ai/
-├── index.html      # Main HTML structure
-├── styles.css      # Night-city dark theme styles
-├── app.js          # All app logic, data, and state management
+├── index.html      # Layout: sidebar, top bar, home dashboard, pages, dialogs, SVG icon sprite
+├── styles.css      # Night-city theme: design tokens, components, responsive rules
+├── app.js          # Data, state (localStorage), SVG city renderer, rendering and interactions
 └── README.md       # This file
 ```
 
 ## Tech Stack
 
-- **HTML5** — Semantic markup
-- **CSS3** — Custom properties, Grid, Flexbox, animations
-- **Vanilla JavaScript** — No frameworks, no dependencies
-- **localStorage** — Persistent state across sessions
+- **HTML5** — semantic markup, inline SVG icon sprite
+- **CSS3** — custom properties, Grid, Flexbox, `color-mix()`, animations
+- **Vanilla JavaScript** — no frameworks, no dependencies; the city is generated as SVG at runtime
+- **localStorage** — persistent state across sessions
 - **Google Fonts** — Inter + JetBrains Mono
 
 ## Browser Support
 
-- Chrome / Edge 90+
-- Firefox 88+
-- Safari 14+
+- Chrome / Edge 111+
+- Firefox 113+
+- Safari 16.4+
 - Mobile browsers (responsive design)
 
 ## License

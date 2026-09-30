@@ -3,211 +3,510 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Engineering Roadmap</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>AI Academy — AI Engineering Roadmap</title>
+    <meta name="description" content="A gamified AI Engineering roadmap: every lesson you finish adds a glowing floor to one of seven towers in your night city.">
+    <meta name="theme-color" content="#0a101d">
+    <meta name="color-scheme" content="dark">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M20 3 35 11.5v17L20 37 5 28.5v-17Z' fill='none' stroke='%2322c55e' stroke-width='3.2' stroke-linejoin='round'/%3E%3Cpath d='M20 11.5 28 16 20 20.5 12 16Z' fill='%234ade80'/%3E%3Cpath d='m12 21.5 8 4.5 8-4.5' fill='none' stroke='%2322c55e' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="app">
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Header -->
-            <header class="header">
-                <div class="header-left">
-                    <div class="logo">
-                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-                            <rect x="2" y="2" width="28" height="28" rx="6" stroke="url(#grad1)" stroke-width="2"/>
-                            <path d="M10 22V10l12 12V10" stroke="url(#grad1)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            <defs>
-                                <linearGradient id="grad1" x1="0" y1="0" x2="32" y2="32">
-                                    <stop offset="0%" stop-color="#6366f1"/>
-                                    <stop offset="100%" stop-color="#a855f7"/>
-                                </linearGradient>
-                            </defs>
-                        </svg>
-                    </div>
-                    <div>
-                        <h1>AI Engineering Roadmap</h1>
-                        <p class="subtitle">Master AI Engineering — one floor at a time</p>
-                    </div>
-                </div>
-                <div class="header-right">
-                    <button class="btn-icon" id="searchBtn" title="Search">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                    </button>
-                    <button class="btn-icon" id="mapBtn" title="Mini Map">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
-                    </button>
-                </div>
-            </header>
+    <!-- ============ SVG icon sprite (Lucide-style, 24px grid, 2px stroke) ============ -->
+    <svg class="sprite" aria-hidden="true" focusable="false">
+        <defs>
+            <!-- shared paint for towers (used by the hero city, thumbnails and the city map) -->
+            <filter id="fx-glow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="2.2" result="b"/>
+                <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <filter id="fx-blur" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="16"/></filter>
+            <filter id="fx-soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>
+            <pattern id="fx-mull-l" width="7" height="40" patternUnits="userSpaceOnUse" patternTransform="skewY(24.7)">
+                <rect x="5.4" width="1.6" height="40" fill="#050a16" opacity=".7"/>
+            </pattern>
+            <pattern id="fx-mull-r" width="7" height="40" patternUnits="userSpaceOnUse" patternTransform="skewY(-24.7)">
+                <rect x="5.4" width="1.6" height="40" fill="#050a16" opacity=".7"/>
+            </pattern>
+        </defs>
+        <symbol id="i-logo" viewBox="0 0 40 40">
+            <defs>
+                <linearGradient id="logo-g" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stop-color="#4ade80"/><stop offset="1" stop-color="#15803d"/>
+                </linearGradient>
+            </defs>
+            <path d="M20 3 35 11.5v17L20 37 5 28.5v-17Z" fill="none" stroke="url(#logo-g)" stroke-width="3.2" stroke-linejoin="round"/>
+            <path d="M20 11.5 28 16 20 20.5 12 16Z" fill="url(#logo-g)" stroke="none"/>
+            <path d="m12 21.5 8 4.5 8-4.5" fill="none" stroke="url(#logo-g)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </symbol>
+        <symbol id="i-home" viewBox="0 0 24 24"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+        <symbol id="i-track" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.5"/><circle cx="5.5" cy="18" r="2.5"/><circle cx="18.5" cy="18" r="2.5"/><path d="M10.9 7.3 6.7 15.7M13.1 7.3l4.2 8.4M8 18h8"/></symbol>
+        <symbol id="i-city" viewBox="0 0 24 24"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4M10 18h4"/></symbol>
+        <symbol id="i-stats" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m19 9-5 5-4-4-3 3"/></symbol>
+        <symbol id="i-cards" viewBox="0 0 24 24"><rect x="3" y="6" width="14" height="15" rx="2"/><path d="M7 3h11a3 3 0 0 1 3 3v11"/><path d="M7 11h6M7 15h4"/></symbol>
+        <symbol id="i-glossary" viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/><path d="M8 7h8M8 11h5"/></symbol>
+        <symbol id="i-settings" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></symbol>
+        <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7.5"/><path d="m20.5 20.5-4.2-4.2"/></symbol>
+        <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
+        <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+        <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+        <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+        <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+        <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+        <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+        <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+        <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+        <symbol id="i-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor" stroke="none"/><path d="m7.5 12.2 3 3 6-6.2" stroke="#07130c" stroke-width="2.4"/></symbol>
+        <symbol id="i-play-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M10 8.5v7l5.5-3.5z" fill="currentColor"/></symbol>
+        <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></symbol>
+        <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+        <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M12 7v5l3 2"/></symbol>
+        <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M8 2v4M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></symbol>
+        <symbol id="i-flame" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M12 2.2c.5 2.6 2.1 4.9 4.1 6.5 2.1 1.7 3.4 3.8 3.4 6.1a7.5 7.5 0 1 1-15 0c0-1.3.5-2.6 1.1-3.4.2 1.6 1.4 2.8 2.9 2.8a2.7 2.7 0 0 0 2.7-2.7c0-1.4-.6-2.2-1.1-3.2-1.2-2.4-.3-4.4 1.9-6.1z"/></symbol>
+        <symbol id="i-star" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/></symbol>
+        <symbol id="i-alert" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M10.3 3.4 2.2 17.6A2 2 0 0 0 3.9 20.6h16.2a2 2 0 0 0 1.7-3L13.7 3.4a2 2 0 0 0-3.4 0z"/><path d="M12 9v4.2M12 16.8h.01" stroke="#0b1220" stroke-width="2.4"/></symbol>
+        <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></symbol>
+        <symbol id="i-memory" viewBox="0 0 24 24"><rect x="2" y="7" width="15" height="14" rx="2"/><path d="M6 3h13a3 3 0 0 1 3 3v10"/><path d="M6 12h7M6 16h4"/></symbol>
+        <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></symbol>
+        <symbol id="i-building" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01M16 6h.01M12 6h.01M12 10h.01M12 14h.01M16 10h.01M16 14h.01M8 10h.01M8 14h.01"/></symbol>
+        <symbol id="i-map" viewBox="0 0 24 24"><path d="M14.1 5.5 9.9 3.4a2 2 0 0 0-1.8 0L3.6 5.6A1 1 0 0 0 3 6.5v12.9a1 1 0 0 0 1.4.9l3.7-1.8a2 2 0 0 1 1.8 0l4.2 2.1a2 2 0 0 0 1.8 0l4.5-2.2a1 1 0 0 0 .6-.9V4.6a1 1 0 0 0-1.4-.9l-3.7 1.8a2 2 0 0 1-1.8 0z"/><path d="M15 5.8v15M9 3.2v15"/></symbol>
+        <symbol id="i-pulse" viewBox="0 0 24 24"><path d="M3 17l4-7 3 5 3-9 3 8 2-3h3"/></symbol>
+        <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+        <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4.5"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+        <symbol id="i-keyboard" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M6 9h.01M10 9h.01M14 9h.01M18 9h.01M7 15h10"/></symbol>
+        <symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></symbol>
+        <!-- topic glyphs -->
+        <symbol id="i-brain" viewBox="0 0 24 24"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/><path d="M12 5v13"/></symbol>
+        <symbol id="i-neural" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5" opacity=".45"/><circle cx="7" cy="8" r="1.8"/><circle cx="7" cy="16" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="17" cy="8" r="1.8"/><circle cx="17" cy="16" r="1.8"/><path d="M8.5 9.1l2 1.7M8.5 14.9l2-1.7M13.5 10.8l2-1.7M13.5 13.2l2 1.7M7 9.8v4.4M17 9.8v4.4"/></symbol>
+        <symbol id="i-bot" viewBox="0 0 24 24"><path d="M12 8V4H8"/><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M2 14h2M20 14h2M15 13v2M9 13v2"/></symbol>
+        <symbol id="i-rocket" viewBox="0 0 24 24"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></symbol>
+        <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></symbol>
+        <symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+        <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    </svg>
 
-            <!-- Search Bar (hidden by default) -->
-            <div class="search-bar" id="searchBar">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                <input type="text" id="searchInput" placeholder="Search lessons, topics, glossary...">
-                <button class="search-close" id="searchClose">&times;</button>
-            </div>
+    <a class="skip-link" href="#main">Skip to content</a>
 
-            <!-- Towers Grid -->
-            <section class="towers-section">
-                <div class="section-header">
-                    <h2>Learning Towers</h2>
-                    <span class="section-subtitle">Complete lessons to build your towers</span>
-                </div>
-                <div class="towers-grid" id="towersGrid">
-                    <!-- Towers rendered by JS -->
-                </div>
-            </section>
+    <div class="app" id="app">
+        <!-- ============ Left sidebar ============ -->
+        <aside class="sidebar" id="sidebar" aria-label="Primary">
+            <a class="brand" href="#home" aria-label="AI Academy home">
+                <svg class="brand-logo" aria-hidden="true"><use href="#i-logo"/></svg>
+                <span class="brand-text">
+                    <span class="brand-name">AI Academy</span>
+                    <span class="brand-tag">Build Your Intelligence</span>
+                </span>
+            </a>
 
-            <!-- Memory Cards Section -->
-            <section class="memory-section">
-                <div class="section-header">
-                    <h2>Memory Cards</h2>
-                    <span class="section-subtitle">Key concepts to remember</span>
-                </div>
-                <div class="memory-cards" id="memoryCards">
-                    <!-- Memory cards rendered by JS -->
-                </div>
-            </section>
+            <nav class="nav" aria-label="Sections">
+                <a class="nav-item" href="#home" data-nav="home"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg><span>Home</span></a>
+                <a class="nav-item" href="#track" data-nav="track"><svg class="i" aria-hidden="true"><use href="#i-track"/></svg><span>Learning Track</span></a>
+                <a class="nav-item" href="#city" data-nav="city"><svg class="i" aria-hidden="true"><use href="#i-city"/></svg><span>City View</span></a>
+                <a class="nav-item" href="#stats" data-nav="stats"><svg class="i" aria-hidden="true"><use href="#i-stats"/></svg><span>Statistics</span></a>
+                <a class="nav-item" href="#flashcards" data-nav="flashcards"><svg class="i" aria-hidden="true"><use href="#i-cards"/></svg><span>Flashcards</span></a>
+                <a class="nav-item" href="#glossary" data-nav="glossary"><svg class="i" aria-hidden="true"><use href="#i-glossary"/></svg><span>Glossary</span></a>
+                <a class="nav-item" href="#settings" data-nav="settings"><svg class="i" aria-hidden="true"><use href="#i-settings"/></svg><span>Settings</span></a>
+            </nav>
 
-            <!-- Glossary Section -->
-            <section class="glossary-section">
-                <div class="section-header">
-                    <h2>Glossary</h2>
-                    <span class="section-subtitle">Key terms & definitions</span>
-                </div>
-                <div class="glossary-grid" id="glossaryGrid">
-                    <!-- Glossary rendered by JS -->
-                </div>
-            </section>
-
-            <!-- Activity Feed -->
-            <section class="activity-section">
-                <div class="section-header">
-                    <h2>Activity Feed</h2>
-                    <span class="section-subtitle">Your recent learning activity</span>
-                </div>
-                <div class="activity-feed" id="activityFeed">
-                    <!-- Activity rendered by JS -->
-                </div>
-            </section>
-        </main>
-
-        <!-- Right Sidebar -->
-        <aside class="sidebar">
-            <!-- Progress Ring -->
-            <div class="sidebar-card progress-card">
-                <h3>Overall Progress</h3>
-                <div class="progress-ring-container">
-                    <svg class="progress-ring" viewBox="0 0 120 120">
-                        <circle class="progress-ring-bg" cx="60" cy="60" r="52"/>
-                        <circle class="progress-ring-fill" id="progressRingFill" cx="60" cy="60" r="52"/>
-                    </svg>
-                    <div class="progress-ring-text">
-                        <span class="progress-percent" id="progressPercent">0%</span>
-                        <span class="progress-label">Complete</span>
-                    </div>
-                </div>
-                <div class="progress-stats">
-                    <div class="stat">
-                        <span class="stat-value" id="completedLessons">0</span>
-                        <span class="stat-label">Lessons Done</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-value" id="totalLessons">0</span>
-                        <span class="stat-label">Total Lessons</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Stats -->
-            <div class="sidebar-card stats-card">
-                <h3>Your Stats</h3>
-                <div class="stats-list">
-                    <div class="stat-item">
-                        <div class="stat-icon streak-icon">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 11-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z"/></svg>
-                        </div>
-                        <div class="stat-info">
-                            <span class="stat-value" id="dayStreak">0</span>
-                            <span class="stat-label">Day Streak</span>
-                        </div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-icon hours-icon">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                        </div>
-                        <div class="stat-info">
-                            <span class="stat-value" id="studyHours">0h</span>
-                            <span class="stat-label">Study Hours</span>
-                        </div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-icon floors-icon">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6M9 11h.01M15 11h.01M9 15h.01M15 15h.01"/></svg>
-                        </div>
-                        <div class="stat-info">
-                            <span class="stat-value" id="unlockedFloors">0</span>
-                            <span class="stat-label">Floors Unlocked</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Weakness Panel -->
-            <div class="sidebar-card weakness-card">
-                <h3>Focus Areas</h3>
-                <p class="weakness-subtitle">Topics needing attention</p>
-                <div class="weakness-list" id="weaknessList">
-                    <!-- Weakness items rendered by JS -->
-                </div>
-            </div>
-
-            <!-- Learning Track (Bottom) -->
-            <div class="sidebar-card track-card">
-                <h3>Learning Track</h3>
-                <div class="track-progress">
-                    <div class="track-bar">
-                        <div class="track-fill" id="trackFill"></div>
-                    </div>
-                    <span class="track-text" id="trackText">0 / 0 lessons</span>
-                </div>
-                <div class="track-legend" id="trackLegend">
-                    <!-- Track legend rendered by JS -->
+            <div class="sidebar-foot">
+                <p>Small steps<br>build big minds.</p>
+                <div class="foot-glyphs" aria-hidden="true">
+                    <svg class="i"><use href="#i-pulse"/></svg>
+                    <svg class="i i-lg"><use href="#i-logo"/></svg>
                 </div>
             </div>
         </aside>
+        <div class="scrim" id="scrim" hidden></div>
+
+        <!-- ============ Top bar ============ -->
+        <header class="topbar">
+            <button class="icon-btn menu-btn" id="menuBtn" type="button" aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false">
+                <svg class="i" aria-hidden="true"><use href="#i-menu"/></svg>
+            </button>
+            <div class="topbar-title">
+                <h1 id="pageTitle">Your AI Engineering Journey</h1>
+                <p class="crumbs"><span>Learn</span><span>Build</span><span>Grow</span></p>
+            </div>
+
+            <div class="search" id="search" role="search">
+                <svg class="i search-ico" aria-hidden="true"><use href="#i-search"/></svg>
+                <input id="searchInput" type="search" placeholder="Search lessons, topics, or terms…" autocomplete="off" spellcheck="false"
+                       aria-label="Search lessons, topics, memory cards and glossary" role="combobox" aria-expanded="false" aria-controls="searchResults" aria-autocomplete="list">
+                <kbd class="search-kbd" aria-hidden="true">/</kbd>
+                <div class="search-results" id="searchResults" role="listbox" aria-label="Search results" hidden></div>
+            </div>
+
+            <div class="topbar-actions">
+                <button class="icon-btn search-toggle" id="searchToggle" type="button" aria-label="Search">
+                    <svg class="i" aria-hidden="true"><use href="#i-search"/></svg>
+                </button>
+                <div class="pop-anchor">
+                    <button class="icon-btn" id="notifBtn" type="button" aria-label="Notifications" aria-haspopup="true" aria-expanded="false" aria-controls="notifPanel">
+                        <svg class="i" aria-hidden="true"><use href="#i-bell"/></svg>
+                        <span class="notif-dot" id="notifDot" hidden></span>
+                    </button>
+                    <div class="popover notif-panel" id="notifPanel" hidden>
+                        <div class="popover-head">Notifications</div>
+                        <ul class="notif-list" id="notifList"></ul>
+                    </div>
+                </div>
+                <div class="pop-anchor">
+                    <button class="profile-btn" id="profileBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="profileMenu">
+                        <span class="avatar" id="avatar" aria-hidden="true">AR</span>
+                        <span class="profile-name" id="profileName">Abdulrahim</span>
+                        <svg class="i i-sm" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+                    </button>
+                    <div class="popover profile-menu" id="profileMenu" hidden>
+                        <a href="#stats" class="menu-link"><svg class="i i-sm" aria-hidden="true"><use href="#i-stats"/></svg>My statistics</a>
+                        <a href="#settings" class="menu-link"><svg class="i i-sm" aria-hidden="true"><use href="#i-settings"/></svg>Settings</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- ============ Main ============ -->
+        <main class="main" id="main" tabindex="-1">
+
+            <!-- ---------- HOME ---------- -->
+            <section class="view view-home" data-view="home" aria-labelledby="pageTitle">
+                <div class="home-grid">
+                    <div class="home-center">
+                        <section class="city-hero" aria-label="Your city: one tower per topic, one floor per lesson">
+                            <div class="city-scroll">
+                                <div class="city-scene" id="heroCity"></div>
+                            </div>
+                            <div class="hero-stats glass">
+                                <div class="hero-stat">
+                                    <div class="ring ring-blue" id="overallRing" role="img" aria-label="Overall progress 0%">
+                                        <svg viewBox="0 0 64 64" aria-hidden="true">
+                                            <defs><linearGradient id="ring-blue-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7dd3fc"/><stop offset="1" stop-color="#2563eb"/></linearGradient></defs>
+                                            <circle class="ring-track" cx="32" cy="32" r="27"/>
+                                            <circle class="ring-fill" cx="32" cy="32" r="27" stroke="url(#ring-blue-g)"/>
+                                        </svg>
+                                        <span class="ring-label" id="progressPercent">0%</span>
+                                    </div>
+                                    <div class="hero-stat-text">
+                                        <span class="eyebrow">Overall Progress</span>
+                                        <strong id="overallPercentBig">0%</strong>
+                                    </div>
+                                </div>
+                                <div class="hero-divider" aria-hidden="true"></div>
+                                <div class="hero-stat">
+                                    <svg class="i hero-stat-ico" aria-hidden="true"><use href="#i-building"/></svg>
+                                    <div class="hero-stat-text">
+                                        <span class="eyebrow">Total Floors Unlocked</span>
+                                        <strong><span id="unlockedFloors">0</span> <span class="muted">/ <span id="totalFloors">49</span></span></strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <div class="home-bottom">
+                            <section class="panel track-panel" aria-labelledby="trackTitle">
+                                <header class="panel-head">
+                                    <h2 id="trackTitle"><svg class="i" aria-hidden="true"><use href="#i-track"/></svg>My Learning Track</h2>
+                                    <a class="link" href="#track">View All</a>
+                                </header>
+                                <div class="track-row" id="trackRow"></div>
+                            </section>
+                            <section class="panel activity-panel" aria-labelledby="activityTitle">
+                                <header class="panel-head">
+                                    <h2 id="activityTitle"><svg class="i" aria-hidden="true"><use href="#i-clock"/></svg>Recent Activity</h2>
+                                    <a class="link" href="#stats">View All</a>
+                                </header>
+                                <ul class="activity-list" id="activityFeed"></ul>
+                            </section>
+                            <section class="panel citymap-panel" aria-labelledby="cityMapTitle">
+                                <header class="panel-head">
+                                    <h2 id="cityMapTitle">City Map</h2>
+                                </header>
+                                <div class="citymap">
+                                    <button class="citymap-canvas" id="cityMapBtn" type="button" aria-label="Open the city map">
+                                        <span class="citymap-svg" id="cityMap"></span>
+                                    </button>
+                                    <div class="zoom" role="group" aria-label="Zoom city map">
+                                        <button type="button" class="zoom-btn" id="zoomIn" aria-label="Zoom in"><svg class="i i-sm" aria-hidden="true"><use href="#i-plus"/></svg></button>
+                                        <button type="button" class="zoom-btn" id="zoomOut" aria-label="Zoom out"><svg class="i i-sm" aria-hidden="true"><use href="#i-minus"/></svg></button>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+
+                    <aside class="home-right" aria-label="Study insights">
+                        <section class="panel overview-panel" aria-labelledby="overviewTitle">
+                            <header class="panel-head">
+                                <h2 id="overviewTitle"><svg class="i" aria-hidden="true"><use href="#i-stats"/></svg>Study Overview</h2>
+                                <label class="select-wrap">
+                                    <span class="sr-only">Time range</span>
+                                    <select id="rangeSelect">
+                                        <option value="week">This Week</option>
+                                        <option value="month">This Month</option>
+                                        <option value="all" selected>All Time</option>
+                                    </select>
+                                    <svg class="i i-xs" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+                                </label>
+                            </header>
+                            <div class="overview-main">
+                                <div class="ring ring-green" id="studyRing" role="img" aria-label="Study progress">
+                                    <svg viewBox="0 0 64 64" aria-hidden="true">
+                                        <defs><linearGradient id="ring-green-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#86efac"/><stop offset="1" stop-color="#16a34a"/></linearGradient></defs>
+                                        <circle class="ring-track" cx="32" cy="32" r="27"/>
+                                        <circle class="ring-fill" cx="32" cy="32" r="27" stroke="url(#ring-green-g)"/>
+                                    </svg>
+                                    <span class="ring-label" id="studyPercent">0%</span>
+                                </div>
+                                <div>
+                                    <p class="overview-label">Study Progress</p>
+                                    <p class="overview-value"><span id="studyHours">0</span> <span class="muted">/ <span id="studyHoursTotal">0</span> hours</span></p>
+                                </div>
+                            </div>
+                            <dl class="overview-stats">
+                                <div class="ov-stat">
+                                    <dt><svg class="i ic-green" aria-hidden="true"><use href="#i-calendar"/></svg><span id="dayStreak">0</span></dt>
+                                    <dd>Day Streak</dd>
+                                </div>
+                                <div class="ov-stat">
+                                    <dt><svg class="i ic-orange" aria-hidden="true"><use href="#i-flame"/></svg><span id="studyDays">0</span></dt>
+                                    <dd>Total Study Days</dd>
+                                </div>
+                                <div class="ov-stat">
+                                    <dt><svg class="i ic-yellow" aria-hidden="true"><use href="#i-star"/></svg><span id="towersBuilt">0</span></dt>
+                                    <dd>Towers Built</dd>
+                                </div>
+                            </dl>
+                        </section>
+
+                        <section class="panel weak-panel" aria-labelledby="weakTitle">
+                            <header class="panel-head">
+                                <h2 id="weakTitle"><svg class="i ic-red" aria-hidden="true"><use href="#i-alert"/></svg>Weaknesses</h2>
+                                <a class="link" href="#stats">View All</a>
+                            </header>
+                            <ul class="weak-list" id="weaknessList"></ul>
+                        </section>
+
+                        <section class="panel memory-panel" aria-labelledby="memoryTitle">
+                            <header class="panel-head">
+                                <h2 id="memoryTitle"><svg class="i" aria-hidden="true"><use href="#i-memory"/></svg>Memory Card</h2>
+                                <a class="link" href="#flashcards">View All</a>
+                            </header>
+                            <div class="memory-card" id="memoryCard" aria-live="polite"></div>
+                        </section>
+
+                        <section class="panel terms-panel" aria-labelledby="termsTitle">
+                            <header class="panel-head">
+                                <h2 id="termsTitle"><svg class="i" aria-hidden="true"><use href="#i-book"/></svg>Key Terms</h2>
+                                <a class="link" href="#glossary">View All</a>
+                            </header>
+                            <div class="chips" id="keyTerms"></div>
+                        </section>
+                    </aside>
+                </div>
+            </section>
+
+            <!-- ---------- LEARNING TRACK ---------- -->
+            <section class="view page" data-view="track" hidden aria-labelledby="trackViewTitle">
+                <header class="page-head">
+                    <div>
+                        <h2 id="trackViewTitle">Learning Track</h2>
+                        <p>Seven towers, seven floors each. Finish the lesson marked <em>Up next</em> to add a floor.</p>
+                    </div>
+                    <div class="page-head-meta" id="trackSummary"></div>
+                </header>
+                <div class="track-grid" id="trackView"></div>
+            </section>
+
+            <!-- ---------- CITY VIEW ---------- -->
+            <section class="view page page-city" data-view="city" hidden aria-labelledby="cityViewTitle">
+                <header class="page-head">
+                    <div>
+                        <h2 id="cityViewTitle">City View</h2>
+                        <p>Every glowing floor is a lesson you finished. Dashed outlines show the floor under construction.</p>
+                    </div>
+                    <button class="btn btn-ghost" type="button" id="openMapBtn"><svg class="i i-sm" aria-hidden="true"><use href="#i-map"/></svg>Bird's-eye map</button>
+                </header>
+                <div class="city-hero city-hero--full">
+                    <div class="city-scroll">
+                        <div class="city-scene" id="fullCity"></div>
+                    </div>
+                </div>
+                <div class="city-legend" id="cityLegend"></div>
+            </section>
+
+            <!-- ---------- STATISTICS ---------- -->
+            <section class="view page" data-view="stats" hidden aria-labelledby="statsViewTitle">
+                <header class="page-head">
+                    <div>
+                        <h2 id="statsViewTitle">Statistics</h2>
+                        <p>Everything here is computed from the lessons you've completed in this browser.</p>
+                    </div>
+                </header>
+                <div class="kpi-row" id="kpiRow"></div>
+                <div class="stats-grid">
+                    <section class="panel" aria-labelledby="towerBarsTitle">
+                        <header class="panel-head"><h2 id="towerBarsTitle"><svg class="i" aria-hidden="true"><use href="#i-city"/></svg>Tower completion</h2></header>
+                        <div class="bars" id="towerBars"></div>
+                    </section>
+                    <section class="panel" aria-labelledby="dailyTitle">
+                        <header class="panel-head"><h2 id="dailyTitle"><svg class="i" aria-hidden="true"><use href="#i-clock"/></svg>Minutes studied · last 14 days</h2></header>
+                        <div class="daily-chart" id="dailyChart"></div>
+                    </section>
+                    <section class="panel" aria-labelledby="weakAllTitle">
+                        <header class="panel-head"><h2 id="weakAllTitle"><svg class="i ic-red" aria-hidden="true"><use href="#i-alert"/></svg>Focus areas</h2></header>
+                        <ul class="weak-list" id="weaknessListFull"></ul>
+                    </section>
+                    <section class="panel" aria-labelledby="feedTitle">
+                        <header class="panel-head"><h2 id="feedTitle"><svg class="i" aria-hidden="true"><use href="#i-pulse"/></svg>Activity feed</h2></header>
+                        <ul class="activity-list activity-list--full" id="activityFeedFull"></ul>
+                    </section>
+                </div>
+            </section>
+
+            <!-- ---------- FLASHCARDS ---------- -->
+            <section class="view page" data-view="flashcards" hidden aria-labelledby="flashViewTitle">
+                <header class="page-head">
+                    <div>
+                        <h2 id="flashViewTitle">Flashcards</h2>
+                        <p>Recall the idea first, then flip the card to check yourself.</p>
+                    </div>
+                </header>
+                <div class="chips chips-filter" id="flashFilter" role="group" aria-label="Filter flashcards by tower"></div>
+                <div class="flash-grid" id="memoryCards"></div>
+            </section>
+
+            <!-- ---------- GLOSSARY ---------- -->
+            <section class="view page" data-view="glossary" hidden aria-labelledby="glossaryViewTitle">
+                <header class="page-head">
+                    <div>
+                        <h2 id="glossaryViewTitle">Glossary</h2>
+                        <p>Key terms &amp; definitions you'll meet across the roadmap.</p>
+                    </div>
+                </header>
+                <div class="glossary-grid" id="glossaryGrid"></div>
+            </section>
+
+            <!-- ---------- SETTINGS ---------- -->
+            <section class="view page" data-view="settings" hidden aria-labelledby="settingsViewTitle">
+                <header class="page-head">
+                    <div>
+                        <h2 id="settingsViewTitle">Settings</h2>
+                        <p>Your progress lives only in this browser — nothing is sent anywhere.</p>
+                    </div>
+                </header>
+                <div class="settings-grid">
+                    <section class="panel" aria-labelledby="profileTitle">
+                        <header class="panel-head"><h2 id="profileTitle"><svg class="i" aria-hidden="true"><use href="#i-user"/></svg>Profile</h2></header>
+                        <form class="form" id="profileForm">
+                            <label class="field">
+                                <span class="field-label">Display name</span>
+                                <input class="input" id="nameInput" name="name" maxlength="32" autocomplete="nickname" required>
+                                <span class="field-help">Shown in the top bar. Initials become your avatar.</span>
+                            </label>
+                            <button class="btn btn-primary" type="submit">Save name</button>
+                        </form>
+                    </section>
+                    <section class="panel" aria-labelledby="dataTitle">
+                        <header class="panel-head"><h2 id="dataTitle"><svg class="i" aria-hidden="true"><use href="#i-database"/></svg>Your data</h2></header>
+                        <p class="settings-copy">Progress, streak and activity are stored under the <code>ai_roadmap_state</code> key in localStorage. Clearing your browser data also clears your city.</p>
+                        <button class="btn btn-danger" type="button" id="resetBtn"><svg class="i i-sm" aria-hidden="true"><use href="#i-reset"/></svg>Reset all progress</button>
+                    </section>
+                    <section class="panel" aria-labelledby="keysTitle">
+                        <header class="panel-head"><h2 id="keysTitle"><svg class="i" aria-hidden="true"><use href="#i-keyboard"/></svg>Keyboard shortcuts</h2></header>
+                        <dl class="shortcuts">
+                            <div><dt><kbd>/</kbd></dt><dd>Focus search</dd></div>
+                            <div><dt><kbd>↑</kbd> <kbd>↓</kbd> <kbd>Enter</kbd></dt><dd>Move through and open search results</dd></div>
+                            <div><dt><kbd>Esc</kbd></dt><dd>Close dialogs, menus and search</dd></div>
+                            <div><dt><kbd>←</kbd> <kbd>→</kbd></dt><dd>Previous / next memory card (when focused)</dd></div>
+                        </dl>
+                    </section>
+                </div>
+            </section>
+        </main>
     </div>
 
-    <!-- Mini Map Modal -->
-    <div class="modal" id="mapModal">
-        <div class="modal-overlay" id="mapOverlay"></div>
-        <div class="modal-content map-modal-content">
-            <div class="modal-header">
-                <h3>Roadmap Overview</h3>
-                <button class="modal-close" id="mapClose">&times;</button>
-            </div>
-            <div class="mini-map" id="miniMap">
-                <!-- Mini map rendered by JS -->
+    <!-- ============ Lesson modal ============ -->
+    <div class="modal" id="lessonModal" hidden>
+        <div class="modal-overlay" data-close></div>
+        <div class="modal-dialog modal-lg" role="dialog" aria-modal="true" aria-labelledby="lessonModalTitle">
+            <header class="modal-head" id="lessonModalHead">
+                <div class="modal-head-main">
+                    <span class="modal-icon" id="lessonModalIcon" aria-hidden="true"></span>
+                    <div>
+                        <h3 id="lessonModalTitle">Lesson</h3>
+                        <p class="modal-sub" id="lessonModalSub"></p>
+                    </div>
+                </div>
+                <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg></button>
+            </header>
+            <div class="modal-body" id="lessonModalBody"></div>
+        </div>
+    </div>
+
+    <!-- ============ City map modal ============ -->
+    <div class="modal" id="mapModal" hidden>
+        <div class="modal-overlay" data-close></div>
+        <div class="modal-dialog modal-lg" role="dialog" aria-modal="true" aria-labelledby="mapModalTitle">
+            <header class="modal-head">
+                <div class="modal-head-main">
+                    <span class="modal-icon" aria-hidden="true"><svg class="i"><use href="#i-map"/></svg></span>
+                    <div>
+                        <h3 id="mapModalTitle">City Map</h3>
+                        <p class="modal-sub">Bird's-eye view of all seven towers. Pick one to open its lessons.</p>
+                    </div>
+                </div>
+                <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg></button>
+            </header>
+            <div class="modal-body map-body">
+                <div class="map-canvas" id="miniMap"></div>
+                <ul class="map-list" id="miniMapList"></ul>
             </div>
         </div>
     </div>
 
-    <!-- Lesson Modal -->
-    <div class="modal" id="lessonModal">
-        <div class="modal-overlay" id="lessonOverlay"></div>
-        <div class="modal-content lesson-modal-content">
-            <div class="modal-header">
-                <h3 id="lessonModalTitle">Lesson</h3>
-                <button class="modal-close" id="lessonClose">&times;</button>
-            </div>
-            <div class="lesson-modal-body" id="lessonModalBody">
-                <!-- Lesson content rendered by JS -->
+    <!-- ============ Term modal ============ -->
+    <div class="modal" id="termModal" hidden>
+        <div class="modal-overlay" data-close></div>
+        <div class="modal-dialog modal-sm" role="dialog" aria-modal="true" aria-labelledby="termModalTitle">
+            <header class="modal-head">
+                <div class="modal-head-main">
+                    <span class="modal-icon" aria-hidden="true"><svg class="i"><use href="#i-book"/></svg></span>
+                    <div>
+                        <p class="eyebrow">Key term</p>
+                        <h3 id="termModalTitle">Term</h3>
+                    </div>
+                </div>
+                <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg></button>
+            </header>
+            <div class="modal-body">
+                <p class="term-def" id="termModalDef"></p>
+                <a class="link" href="#glossary" data-close>Open the full glossary</a>
             </div>
         </div>
     </div>
+
+    <!-- ============ Confirm modal ============ -->
+    <div class="modal" id="confirmModal" hidden>
+        <div class="modal-overlay" data-close></div>
+        <div class="modal-dialog modal-sm" role="alertdialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmText">
+            <header class="modal-head">
+                <div class="modal-head-main">
+                    <span class="modal-icon modal-icon--danger" aria-hidden="true"><svg class="i"><use href="#i-alert"/></svg></span>
+                    <h3 id="confirmTitle">Reset all progress?</h3>
+                </div>
+            </header>
+            <div class="modal-body">
+                <p id="confirmText">This removes every completed lesson, your streak and activity history from this browser. It can't be undone.</p>
+                <div class="modal-actions">
+                    <button class="btn btn-ghost" type="button" data-close>Cancel</button>
+                    <button class="btn btn-danger" type="button" id="confirmReset">Reset progress</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="true"></div>
 
     <script src="app.js"></script>
 </body>
