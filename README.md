@@ -12,6 +12,7 @@ An interactive, gamified AI Engineering roadmap drawn as a **night city**. Each 
 - **Weakness Panel** — auto-computed topics with the lowest completion
 - **Memory Cards** — 14 key concepts as flashcards (Show Answer, previous / next, and a full Flashcards page with topic filters)
 - **Glossary** — 14 essential AI/ML terms (Key Terms chips on the home screen + full Glossary page)
+- **Add your own terms & flashcards** — the **+** card on the Glossary and Flashcards pages opens a form (title + description for a term, front + back for a flashcard). Your items can be edited or deleted, show up in search and the home widgets, are saved in this browser, and survive "Reset all progress"
 - **Instant Search** — press `/` and search lessons, topics, memory cards and glossary terms; arrow keys + Enter to open a result
 - **City Map** — bird's-eye isometric map with zoom, plus a larger map dialog
 - **Activity Feed** — recent completions on the home screen, full history on the Statistics page

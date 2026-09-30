@@ -75,7 +75,7 @@ body {
     overflow-x: hidden;
 }
 a { color: inherit; text-decoration: none; }
-button, input, select { font: inherit; color: inherit; }
+button, input, select, textarea { font: inherit; color: inherit; }
 button { background: none; border: 0; cursor: pointer; }
 ul, ol { list-style: none; }
 img, svg { display: block; }
@@ -908,3 +908,38 @@ body.modal-open { overflow: hidden; }
 .status .i { width: 11px; height: 11px; }
 .btn .i { width: 16px; height: 16px; }
 .pill .i { width: 15px; height: 15px; color: var(--green); }
+
+/* ---------- Your own terms & flashcards ---------- */
+.add-tile {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+    min-height: 150px; width: 100%;
+    border: 1.5px dashed rgba(148, 163, 184, 0.35);
+    border-radius: var(--r);
+    background: rgba(15, 24, 41, 0.45);
+    color: var(--text-2);
+    transition: border-color var(--t-fast), background var(--t-fast), color var(--t-fast);
+}
+.add-tile--card { min-height: 196px; }
+.add-tile:hover, .add-tile:focus-visible { border-color: rgba(74, 222, 128, 0.7); background: var(--green-soft); color: var(--green-2); }
+.add-tile-plus { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; border: 1.5px solid currentColor; }
+.add-tile-plus .i { width: 26px; height: 26px; stroke-width: 1.8; }
+.add-tile-label { font-size: 13.5px; font-weight: 600; }
+
+.gl-item { position: relative; }
+.gl-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.gl-item.is-mine { border-color: rgba(74, 222, 128, 0.28); }
+.mine-badge { display: inline-block; margin-top: 10px; font-size: 11.5px; font-weight: 600; color: #bbf7d0; background: rgba(34, 197, 94, 0.12); border-radius: 999px; padding: 2px 9px; }
+
+.item-actions { display: flex; gap: 2px; flex: none; margin: -6px -8px 0 0; }
+.item-btn { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 9px; color: var(--text-2); transition: background var(--t-fast), color var(--t-fast); }
+.item-btn .i { width: 16px; height: 16px; }
+.item-btn:hover { background: var(--surface-3); color: var(--text); }
+.item-btn--danger:hover { background: rgba(239, 68, 68, 0.14); color: #fca5a5; }
+.flash { position: relative; }
+.flash .item-actions { position: absolute; top: 10px; right: 12px; margin: 0; z-index: 2; background: rgba(9, 15, 29, 0.6); border-radius: 10px; }
+
+.editor-form { display: flex; flex-direction: column; gap: 14px; align-items: stretch; }
+.textarea { height: auto; min-height: 110px; padding: 10px 12px; line-height: 1.5; resize: vertical; }
+.input[aria-invalid="true"] { border-color: rgba(239, 68, 68, 0.7); box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12); }
+.field-error { font-size: 12.5px; color: #fca5a5; }
+.editor-form .modal-actions { margin-top: 4px; }

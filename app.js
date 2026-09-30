@@ -233,6 +233,9 @@ function normalizeState(saved) {
     if (!Array.isArray(s.activityLog)) s.activityLog = [];
     s.studyMinutes = Number(s.studyMinutes) || 0;
     s.dayStreak = Number(s.dayStreak) || 0;
+    // Learner-made glossary terms and flashcards
+    s.customGlossary = Array.isArray(s.customGlossary) ? s.customGlossary.filter(g => g && g.id && g.term) : [];
+    s.customCards = Array.isArray(s.customCards) ? s.customCards.filter(c => c && c.id && c.front) : [];
     return s;
 }
 
@@ -337,6 +340,29 @@ function getNextLesson(topicId) {
     const topic = TOPICS[topicId];
     const progress = getTopicProgress(topicId);
     return progress.completed < topic.lessons.length ? topic.lessons[progress.completed] : null;
+}
+
+// Built-in content first, then the learner's own items (oldest first)
+function getAllTerms() {
+    return [
+        ...GLOSSARY.map((g, i) => ({ key: `b${i}`, term: g.term, def: g.def, custom: false })),
+        ...state.customGlossary.map(g => ({ key: `c${g.id}`, id: g.id, term: g.term, def: g.def, custom: true }))
+    ];
+}
+
+function getAllCards() {
+    return [
+        ...MEMORY_CARDS.map((c, i) => ({ key: `b${i}`, title: c.title, body: c.body, topic: c.topic, custom: false })),
+        ...state.customCards.map(c => ({ key: `c${c.id}`, id: c.id, title: c.front, body: c.back, topic: null, custom: true }))
+    ];
+}
+
+const MY_COLOR = '#4ade80';
+const cardColor = card => (card.custom ? MY_COLOR : getTopicColor(card.topic));
+const cardLabel = card => (card.custom ? 'My card' : TOPICS[card.topic].shortName);
+
+function newId() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 }
 
 function getTowersBuilt() {
@@ -1109,10 +1135,26 @@ function weakItem(w) {
     </button></li>`;
 }
 
+function addTile(kind) {
+    const label = kind === 'term' ? 'Add a term' : 'Add a flashcard';
+    return `<button type="button" class="add-tile add-tile--${kind}" data-add="${kind}" aria-label="${label}">
+        <span class="add-tile-plus">${ico('plus')}</span>
+        <span class="add-tile-label">${label}</span>
+    </button>`;
+}
+
+function itemActions(kind, item, name) {
+    return `<div class="item-actions">
+        <button type="button" class="item-btn" data-edit="${kind}" data-id="${item.id}" aria-label="Edit ${escapeHtml(name)}">${ico('pencil')}</button>
+        <button type="button" class="item-btn item-btn--danger" data-delete="${kind}" data-id="${item.id}" aria-label="Delete ${escapeHtml(name)}">${ico('trash')}</button>
+    </div>`;
+}
+
 function renderMemoryCards() {
     // Home widget: one card at a time
-    const card = MEMORY_CARDS[ui.memoryIndex];
-    const topic = TOPICS[card.topic];
+    const cards = getAllCards();
+    ui.memoryIndex = ((ui.memoryIndex % cards.length) + cards.length) % cards.length;
+    const card = cards[ui.memoryIndex];
     const shown = ui.memoryRevealed;
     const hadFocus = document.activeElement && document.activeElement.closest('#memoryCard')
         ? document.activeElement.dataset.mc || 'reveal' : null;
@@ -1120,7 +1162,7 @@ function renderMemoryCards() {
         <div class="mc-top">
             <span class="mc-ico">${ico('sparkle')}</span>
             <div>
-                <p class="mc-topic">${escapeHtml(topic.shortName)}</p>
+                <p class="mc-topic">${escapeHtml(cardLabel(card))}</p>
                 <p class="mc-q">${escapeHtml(card.title)}</p>
             </div>
         </div>
@@ -1128,7 +1170,7 @@ function renderMemoryCards() {
         <div class="mc-foot">
             <button type="button" class="mc-reveal" data-mc="reveal" aria-expanded="${shown}" aria-controls="mcAnswer">${shown ? 'Hide Answer' : 'Show Answer'}</button>
             <div class="mc-nav">
-                <span class="mc-count">${ui.memoryIndex + 1} / ${MEMORY_CARDS.length}</span>
+                <span class="mc-count">${ui.memoryIndex + 1} / ${cards.length}</span>
                 <button type="button" class="mc-btn" data-mc="prev" aria-label="Previous card">${ico('chevron-left')}</button>
                 <button type="button" class="mc-btn" data-mc="next" aria-label="Next card">${ico('chevron-right')}</button>
             </div>
@@ -1139,42 +1181,151 @@ function renderMemoryCards() {
     }
 
     // Flashcards page
-    const filters = [{ id: 'all', label: 'All cards' }, ...TOPICS.map(t => ({ id: String(t.id), label: t.shortName, c: getTopicColor(t.id) }))];
+    const filters = [
+        { id: 'all', label: 'All cards' },
+        ...TOPICS.map(t => ({ id: String(t.id), label: t.shortName, c: getTopicColor(t.id) })),
+        { id: 'mine', label: `My cards (${state.customCards.length})`, c: MY_COLOR }
+    ];
     $('#flashFilter').innerHTML = filters.map(f =>
         `<button type="button" class="chip" data-filter="${f.id}" aria-pressed="${ui.flashFilter === f.id}"${f.c ? ` style="--c:${f.c}"` : ''}>${f.c ? '<span class="dot"></span>' : ''}${escapeHtml(f.label)}</button>`
     ).join('');
 
-    $('#memoryCards').innerHTML = MEMORY_CARDS.map((c, idx) => ({ c, idx }))
-        .filter(({ c }) => ui.flashFilter === 'all' || String(c.topic) === ui.flashFilter)
-        .map(({ c, idx }) => {
-            const flipped = ui.flipped.has(idx);
-            return `<div class="flash${flipped ? ' is-flipped' : ''}" id="card-${idx}" style="--c:${getTopicColor(c.topic)}">
-                <button type="button" class="flash-inner" data-card="${idx}" aria-pressed="${flipped}" aria-label="${escapeHtml(c.title)}. ${flipped ? escapeHtml(c.body) : 'Press to reveal the answer.'}">
-                    <span class="flash-face flash-front" aria-hidden="true">
-                        <span class="flash-topic"><span class="dot"></span>${escapeHtml(TOPICS[c.topic].shortName)}</span>
-                        <span class="flash-title">${escapeHtml(c.title)}</span>
-                        <span class="flash-hint">${ico('reset')} Tap to flip</span>
-                    </span>
-                    <span class="flash-face flash-back" aria-hidden="true">
-                        <span class="flash-topic"><span class="dot"></span>${escapeHtml(c.title)}</span>
-                        <span class="flash-body">${escapeHtml(c.body)}</span>
-                    </span>
-                </button>
-            </div>`;
-        }).join('');
+    const visible = cards.filter(c => ui.flashFilter === 'all'
+        || (ui.flashFilter === 'mine' ? c.custom : !c.custom && String(c.topic) === ui.flashFilter));
+    const tiles = visible.map(c => {
+        const flipped = ui.flipped.has(c.key);
+        return `<div class="flash${flipped ? ' is-flipped' : ''}${c.custom ? ' is-mine' : ''}" id="card-${c.key}" style="--c:${cardColor(c)}">
+            <button type="button" class="flash-inner" data-card="${c.key}" aria-pressed="${flipped}" aria-label="${escapeHtml(c.title)}. ${flipped ? escapeHtml(c.body) : 'Press to reveal the answer.'}">
+                <span class="flash-face flash-front" aria-hidden="true">
+                    <span class="flash-topic"><span class="dot"></span>${escapeHtml(cardLabel(c))}</span>
+                    <span class="flash-title">${escapeHtml(c.title)}</span>
+                    <span class="flash-hint">${ico('reset')} Tap to flip</span>
+                </span>
+                <span class="flash-face flash-back" aria-hidden="true">
+                    <span class="flash-topic"><span class="dot"></span>${escapeHtml(c.title)}</span>
+                    <span class="flash-body">${escapeHtml(c.body)}</span>
+                </span>
+            </button>
+            ${c.custom ? itemActions('card', c, c.title) : ''}
+        </div>`;
+    });
+    const showAdd = ui.flashFilter === 'all' || ui.flashFilter === 'mine';
+    $('#memoryCards').innerHTML = tiles.join('') + (showAdd ? addTile('card') : '');
 }
 
 function renderGlossary() {
-    $('#keyTerms').innerHTML = GLOSSARY.slice(0, 8).map((g, idx) =>
-        `<button type="button" class="chip" data-term="${idx}">${escapeHtml(g.term)}</button>`
+    const terms = getAllTerms();
+    const mine = terms.filter(t => t.custom).reverse().slice(0, 3);
+    const keyTerms = [...mine, ...terms.filter(t => !t.custom)].slice(0, 8);
+    $('#keyTerms').innerHTML = keyTerms.map(g =>
+        `<button type="button" class="chip" data-term="${g.key}">${escapeHtml(g.term)}</button>`
     ).join('');
 
-    $('#glossaryGrid').innerHTML = GLOSSARY.map((item, idx) => `
-        <article class="panel gl-item" id="term-${idx}">
-            <h3 class="gl-term">${escapeHtml(item.term)}</h3>
+    $('#glossaryGrid').innerHTML = terms.map(item => `
+        <article class="panel gl-item${item.custom ? ' is-mine' : ''}" id="term-${item.key}">
+            <div class="gl-head">
+                <h3 class="gl-term">${escapeHtml(item.term)}</h3>
+                ${item.custom ? itemActions('term', item, item.term) : ''}
+            </div>
             <p class="gl-def">${escapeHtml(item.def)}</p>
+            ${item.custom ? '<span class="mine-badge">Added by you</span>' : ''}
         </article>
-    `).join('');
+    `).join('') + addTile('term');
+}
+
+// --- Your own glossary terms and flashcards ---
+
+const editor = { kind: 'term', id: null };
+
+function openEditor(kind, id = null) {
+    editor.kind = kind;
+    editor.id = id;
+    const isTerm = kind === 'term';
+    const existing = id
+        ? (isTerm ? state.customGlossary : state.customCards).find(x => x.id === id)
+        : null;
+    $('#editorEyebrow').textContent = isTerm ? 'Glossary' : 'Flashcards';
+    $('#editorTitle').textContent = existing ? (isTerm ? 'Edit your term' : 'Edit your flashcard') : (isTerm ? 'Add a glossary term' : 'Add a flashcard');
+    $('#editorLabelA').textContent = isTerm ? 'Title' : 'Front';
+    $('#editorLabelB').textContent = isTerm ? 'Description' : 'Back';
+    $('#editorA').placeholder = isTerm ? 'e.g. Attention' : 'e.g. What does a learning rate control?';
+    $('#editorB').placeholder = isTerm ? 'What the term means, in your own words' : 'The answer you want to recall';
+    $('#editorHelpB').textContent = isTerm ? 'Shown under the title on the Glossary page.' : 'Hidden until the card is flipped.';
+    $('#editorIcon').innerHTML = ico(isTerm ? 'glossary' : 'cards');
+    $('#editorSubmit').innerHTML = `${ico(existing ? 'check' : 'plus')}${existing ? 'Save changes' : isTerm ? 'Add term' : 'Add flashcard'}`;
+    $('#editorA').value = existing ? (isTerm ? existing.term : existing.front) : '';
+    $('#editorB').value = existing ? (isTerm ? existing.def : existing.back) : '';
+    setFieldError('A', '');
+    setFieldError('B', '');
+    openModal('#editorModal', '#editorA');
+}
+
+function setFieldError(which, message) {
+    const input = $(`#editor${which}`);
+    const err = $(`#editorErr${which}`);
+    err.textContent = message;
+    err.hidden = !message;
+    if (message) input.setAttribute('aria-invalid', 'true');
+    else input.removeAttribute('aria-invalid');
+}
+
+function saveEditor() {
+    const isTerm = editor.kind === 'term';
+    const a = $('#editorA').value.trim();
+    const b = $('#editorB').value.trim();
+    const label = isTerm ? 'title' : 'front';
+    setFieldError('A', a ? '' : `Add a ${label} first.`);
+    setFieldError('B', b ? '' : `Add a ${isTerm ? 'description' : 'back'} too.`);
+    if (isTerm && a) {
+        const clash = getAllTerms().find(t => t.term.toLowerCase() === a.toLowerCase() && t.id !== editor.id);
+        if (clash) setFieldError('A', `“${clash.term}” is already in the glossary.`);
+    }
+    const firstBad = ['A', 'B'].find(w => $(`#editor${w}`).getAttribute('aria-invalid') === 'true');
+    if (firstBad) { $(`#editor${firstBad}`).focus(); return; }
+
+    const list = isTerm ? state.customGlossary : state.customCards;
+    let item = editor.id ? list.find(x => x.id === editor.id) : null;
+    const wasNew = !item;
+    if (!item) {
+        item = { id: newId(), createdAt: new Date().toISOString() };
+        list.push(item);
+    }
+    if (isTerm) { item.term = a; item.def = b; } else { item.front = a; item.back = b; }
+    saveState(state);
+
+    closeModal('#editorModal');
+    if (!isTerm && wasNew && ui.flashFilter !== 'all' && ui.flashFilter !== 'mine') ui.flashFilter = 'mine';
+    renderMemoryCards();
+    renderGlossary();
+    const key = `c${item.id}`;
+    const el = document.getElementById(isTerm ? `term-${key}` : `card-${key}`);
+    flashElement(el);
+    const focusTarget = wasNew ? $(`[data-add="${editor.kind}"]`) : el && $('[data-edit]', el);
+    if (focusTarget) focusTarget.focus({ preventScroll: true });
+    showToast(wasNew ? (isTerm ? 'Term added' : 'Flashcard added') : 'Saved', a, 'success');
+}
+
+function deleteItem(kind, id) {
+    const isTerm = kind === 'term';
+    const list = isTerm ? state.customGlossary : state.customCards;
+    const item = list.find(x => x.id === id);
+    if (!item) return;
+    const name = isTerm ? item.term : item.front;
+    openConfirm({
+        title: isTerm ? 'Delete this term?' : 'Delete this flashcard?',
+        text: `“${name}” will be removed from this browser. This can't be undone.`,
+        confirmLabel: 'Delete',
+        onConfirm: () => {
+            const idx = list.indexOf(item);
+            if (idx !== -1) list.splice(idx, 1);
+            ui.flipped.delete(`c${id}`);
+            saveState(state);
+            renderMemoryCards();
+            renderGlossary();
+            $(`[data-add="${kind}"]`)?.focus({ preventScroll: true });
+            showToast(isTerm ? 'Term deleted' : 'Flashcard deleted', name, 'info');
+        }
+    });
 }
 
 // Shorter, scannable wording for the stored activity text (the stored text is unchanged)
@@ -1612,8 +1763,8 @@ function closeMap() {
     closeModal('#mapModal');
 }
 
-function openTerm(idx) {
-    const item = GLOSSARY[idx];
+function openTerm(key) {
+    const item = getAllTerms().find(t => t.key === key);
     if (!item) return;
     $('#termModalTitle').textContent = item.term;
     $('#termModalDef').textContent = item.def;
@@ -1627,25 +1778,37 @@ function flashElement(el) {
     setTimeout(() => el.classList.remove('is-flash'), 1800);
 }
 
-function goToCard(idx) {
+function goToCard(key) {
     ui.flashFilter = 'all';
-    ui.flipped.add(idx);
+    ui.flipped.add(key);
     location.hash = '#flashcards';
     showView('flashcards', { scroll: false });
     renderMemoryCards();
-    flashElement(document.getElementById(`card-${idx}`));
+    flashElement(document.getElementById(`card-${key}`));
 }
 
-function goToTerm(idx) {
+function goToTerm(key) {
     location.hash = '#glossary';
     showView('glossary', { scroll: false });
-    flashElement(document.getElementById(`term-${idx}`));
+    flashElement(document.getElementById(`term-${key}`));
+}
+
+// Generic confirm dialog (used by reset and delete)
+let confirmAction = null;
+function openConfirm({ title, text, confirmLabel, onConfirm }) {
+    $('#confirmTitle').textContent = title;
+    $('#confirmText').textContent = text;
+    $('#confirmReset').textContent = confirmLabel;
+    confirmAction = onConfirm;
+    openModal('#confirmModal', '#confirmModal [data-close]');
 }
 
 function resetProgress() {
-    const name = state.profileName;
-    state = getDefaultState();
-    if (name) state.profileName = name;
+    const { profileName, customGlossary, customCards } = state;
+    state = normalizeState(getDefaultState());
+    if (profileName) state.profileName = profileName;
+    state.customGlossary = customGlossary;
+    state.customCards = customCards;
     saveState(state);
     ui.flipped.clear();
     renderAll();
@@ -1697,10 +1860,10 @@ function performSearch(query) {
             lessons.push({ kind: 'lesson', topic: t.id, lesson: l.id, title: l.title, meta: `${t.shortName} · Floor ${i + 1} · ${l.duration}`, glyph: t.glyph, color: getTopicColor(t.id) });
         }
     }));
-    const cards = MEMORY_CARDS.map((c, idx) => ({ c, idx })).filter(({ c }) => has(c.title) || has(c.body))
-        .map(({ c, idx }) => ({ kind: 'card', idx, title: c.title, meta: c.body, glyph: 'memory', color: '#a5b4fc' }));
-    const terms = GLOSSARY.map((g, idx) => ({ g, idx })).filter(({ g }) => has(g.term) || has(g.def))
-        .map(({ g, idx }) => ({ kind: 'term', idx, title: g.term, meta: g.def, glyph: 'book', color: '#4ade80' }));
+    const cards = getAllCards().filter(c => has(c.title) || has(c.body))
+        .map(c => ({ kind: 'card', key: c.key, title: c.title, meta: c.custom ? `My card · ${c.body}` : c.body, glyph: 'memory', color: '#a5b4fc' }));
+    const terms = getAllTerms().filter(g => has(g.term) || has(g.def))
+        .map(g => ({ kind: 'term', key: g.key, title: g.term, meta: g.def, glyph: 'book', color: '#4ade80' }));
 
     const groups = [
         { label: 'Topics', items: topics.slice(0, 4) },
@@ -1751,8 +1914,8 @@ function activateResult(idx) {
     $('#search').classList.remove('is-open');
     if (item.kind === 'topic') openTopic(item.topic);
     if (item.kind === 'lesson') openTopic(item.topic, item.lesson);
-    if (item.kind === 'card') goToCard(item.idx);
-    if (item.kind === 'term') openTerm(item.idx);
+    if (item.kind === 'card') goToCard(item.key);
+    if (item.kind === 'term') openTerm(item.key);
 }
 
 // --- Chrome: sidebar + popovers ---
@@ -1834,17 +1997,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const termBtn = t.closest('[data-term]');
-        if (termBtn) { openTerm(+termBtn.dataset.term); return; }
+        if (termBtn) { openTerm(termBtn.dataset.term); return; }
+
+        const addBtn = t.closest('[data-add]');
+        if (addBtn) { openEditor(addBtn.dataset.add); return; }
+
+        const editBtn = t.closest('[data-edit]');
+        if (editBtn) { openEditor(editBtn.dataset.edit, editBtn.dataset.id); return; }
+
+        const delBtn = t.closest('[data-delete]');
+        if (delBtn) { deleteItem(delBtn.dataset.delete, delBtn.dataset.id); return; }
 
         const card = t.closest('[data-card]');
         if (card) {
-            const idx = +card.dataset.card;
-            if (ui.flipped.has(idx)) ui.flipped.delete(idx); else ui.flipped.add(idx);
+            const key = card.dataset.card;
+            const data = getAllCards().find(c => c.key === key);
+            if (!data) return;
+            if (ui.flipped.has(key)) ui.flipped.delete(key); else ui.flipped.add(key);
             const wrap = card.closest('.flash');
-            const flipped = ui.flipped.has(idx);
+            const flipped = ui.flipped.has(key);
             wrap.classList.toggle('is-flipped', flipped);
             card.setAttribute('aria-pressed', String(flipped));
-            card.setAttribute('aria-label', `${MEMORY_CARDS[idx].title}. ${flipped ? MEMORY_CARDS[idx].body : 'Press to reveal the answer.'}`);
+            card.setAttribute('aria-label', `${data.title}. ${flipped ? data.body : 'Press to reveal the answer.'}`);
             return;
         }
 
@@ -1856,7 +2030,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const action = mc.dataset.mc;
             if (action === 'reveal') ui.memoryRevealed = !ui.memoryRevealed;
             else {
-                ui.memoryIndex = (ui.memoryIndex + (action === 'next' ? 1 : -1) + MEMORY_CARDS.length) % MEMORY_CARDS.length;
+                ui.memoryIndex += action === 'next' ? 1 : -1;
                 ui.memoryRevealed = false;
             }
             renderMemoryCards();
@@ -1924,7 +2098,7 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#memoryCard').addEventListener('keydown', (e) => {
         if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
             e.preventDefault();
-            ui.memoryIndex = (ui.memoryIndex + (e.key === 'ArrowRight' ? 1 : -1) + MEMORY_CARDS.length) % MEMORY_CARDS.length;
+            ui.memoryIndex += e.key === 'ArrowRight' ? 1 : -1;
             ui.memoryRevealed = false;
             renderMemoryCards();
             $(`#memoryCard [data-mc="${e.key === 'ArrowRight' ? 'next' : 'prev'}"]`)?.focus();
@@ -1951,8 +2125,25 @@ document.addEventListener('DOMContentLoaded', () => {
         renderProfile();
         showToast('Profile saved', `Hi, ${name}!`, 'success');
     });
-    $('#resetBtn').addEventListener('click', () => openModal('#confirmModal', '#confirmModal [data-close]'));
-    $('#confirmReset').addEventListener('click', () => { closeModal('#confirmModal'); resetProgress(); });
+    $('#resetBtn').addEventListener('click', () => openConfirm({
+        title: 'Reset all progress?',
+        text: 'This removes every completed lesson, your streak and activity history from this browser. Your own glossary terms and flashcards are kept. It can\'t be undone.',
+        confirmLabel: 'Reset progress',
+        onConfirm: resetProgress
+    }));
+    $('#confirmReset').addEventListener('click', () => {
+        const action = confirmAction;
+        confirmAction = null;
+        closeModal('#confirmModal');
+        if (action) action();
+    });
+
+    // Add / edit dialog for your own terms and flashcards
+    $('#editorForm').addEventListener('submit', (e) => { e.preventDefault(); saveEditor(); });
+    $('#editorB').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); saveEditor(); }
+    });
+    ['A', 'B'].forEach(w => $(`#editor${w}`).addEventListener('input', () => setFieldError(w, '')));
 
     // Re-render the chart when the stats page is resized
     let resizeTimer;
