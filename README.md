@@ -1,4 +1,4 @@
-# AI Academy — AI Engineering Roadmap
+# AI — AI Engineering Roadmap
 
 An interactive, gamified AI Engineering roadmap drawn as a **night city**. Each of the 7 core topics is a **tower**, and each completed lesson lights up a new **floor**. Track your progress, build streaks, and master AI engineering — one floor at a time.
 
@@ -88,7 +88,7 @@ After changing any file, push it and GitHub Pages redeploys in a minute or two:
 ```bash
 cd C:/Users/abdul/roadmap-for-ai
 git add index.html styles.css app.js README.md
-git commit -m "Redesign UI as AI Academy night-city dashboard"
+git commit -m "Describe your change"
 git push
 ```
 

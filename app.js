@@ -1438,7 +1438,7 @@ function showView(view, { scroll = true } = {}) {
         if (a.dataset.nav === view) a.setAttribute('aria-current', 'page');
         else a.removeAttribute('aria-current');
     });
-    document.title = view === 'home' ? 'AI Academy — AI Engineering Roadmap' : `${VIEW_TITLES[view]} · AI Academy`;
+    document.title = view === 'home' ? 'AI — AI Engineering Roadmap' : `${VIEW_TITLES[view]} · AI`;
     closeSidebar();
     renderView(view);
     if (view === 'home') City.scenes.forEach((st, el) => { if (el.id === 'heroCity') City.position(el); });
