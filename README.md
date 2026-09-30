@@ -23,6 +23,7 @@ An interactive, gamified AI Engineering roadmap drawn as a **night city**. Each 
 - **Responsive** — sidebar becomes a drawer on tablets/phones; the city scrolls sideways on small screens
 - **Respects reduced motion** — animations switch off when the OS asks for it
 - **100% Local & Free** — all data stored in `localStorage` (key `ai_roadmap_state`), no server, no build step
+- **Analytics** — Microsoft Clarity (project `yq86md8lio`) records anonymous usage, heatmaps and session replays; the snippet is in the `<head>` of `index.html`
 
 ## Quick Start
 
